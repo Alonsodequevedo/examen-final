@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int busqueda_secuencial(int arr[], int n, int x) 
+{
+	int i;
+    for (i = 0; i < n; i++) {
+        if (arr[i] == x)
+            return i;
+    }
+    return -1;
+}
+
+int busqueda_binaria(int arr[], int n, int x) 
+{
+    int left = 0, right = n - 1;
+    while (left <= right) 
+	{
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == x)
+            return mid;
+        if (arr[mid] < x)
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }
+    return -1;
+}
+
+int main() 
+{
+    int n = 50000;
+    int arr[n];
+    int i;
+    for (i = 0; i < n; i++) 
+	{
+        arr[i] = i + 1;
+    }
+
+    double start_time, end_time;
+    int found_index;
+
+    printf("Busqueda Secuencial\n");
+    start_time = clock();
+    for (i = 0; i < 100; i++) 
+	{
+        int num = rand() % n + 1;
+        found_index = busqueda_secuencial(arr, n, num);
+        end_time = clock();
+        printf("Numero: %d Encontrado en posicion: %d Tiempo: %lf ms\n", num, found_index, (end_time - start_time) * 1000 / CLOCKS_PER_SEC);
+        start_time = end_time;
+    }
+
+    printf("\nBusqueda Binaria\n");
+    start_time = clock();
+    for (i = 0; i < 100; i++) 
+	{
+        int num = rand() % n + 1;
+        found_index = busqueda_binaria(arr, n, num);
+        end_time = clock();
+        printf("Numero: %d Encontrado en posicion: %d Tiempo: %lf ms\n", num, found_index, (end_time - start_time) * 1000 / CLOCKS_PER_SEC);
+        start_time = end_time;
+    }
+
+    return 0;
+}
