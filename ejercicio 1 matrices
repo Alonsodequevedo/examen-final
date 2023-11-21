@@ -4,10 +4,9 @@
 
 #define N 30
 
-
 void llenarMatriz(int matriz[N][N]) 
 {
-	int i, j;
+    int i, j;
     for (i = 0; i < N; i++) 
 	{
         for (j = 0; j < N; j++) 
@@ -17,14 +16,14 @@ void llenarMatriz(int matriz[N][N])
     }
 }
 
-
 void imprimirMatriz(int matriz[N][N]) 
 {
-	int i, j;
+    int i, j;
+    
     for (i = 0; i < N; i++) 
 	{
-        for (j = 0; j < N; j++) 
-		{
+        for (j = 0; j < N; j++)
+		 {
             printf("%d ", matriz[i][j]);
         }
         printf("\n");
@@ -32,10 +31,10 @@ void imprimirMatriz(int matriz[N][N])
     printf("\n");
 }
 
-
 void multiplicarMatrices(int matrizA[N][N], int matrizB[N][N], int resultado[N][N]) 
 {
-	int i, j, k;
+    int i, j, k;
+    
     for (i = 0; i < N; i++) 
 	{
         for (j = 0; j < N; j++) 
@@ -49,40 +48,43 @@ void multiplicarMatrices(int matrizA[N][N], int matrizB[N][N], int resultado[N][
     }
 }
 
-
-double medirTiempoMultiplicacion(int matrizA[N][N], int matrizB[N][N], int resultado[N][N]) {
+double medirTiempoMultiplicacion(int matrizA[N][N], int matrizB[N][N], int resultado[N][N], int iteraciones) 
+{
     clock_t inicio = clock();
-    multiplicarMatrices(matrizA, matrizB, resultado);
+    int i;
+    
+    for (i = 0; i < iteraciones; ++i) 
+	{
+        multiplicarMatrices(matrizA, matrizB, resultado);
+    }
+    
     clock_t fin = clock();
 
-    
-    return ((double)(fin - inicio)) / CLOCKS_PER_SEC * 1000.0;
+    return ((double)(fin - inicio)) / CLOCKS_PER_SEC * 1000.0 / iteraciones;
 }
 
-int main() {
-   
+int main() 
+{
     int matrizA[N][N];
     int matrizB[N][N];
     int resultado[N][N];
-
 
     srand(time(NULL));
     llenarMatriz(matrizA);
     llenarMatriz(matrizB);
 
-
-    printf("Matriz A:\n");
+    printf("\033[1;31mMatriz A:\n");
     imprimirMatriz(matrizA);
-    printf("Matriz B:\n");
+    printf("\033[1;32mMatriz B:\n");
     imprimirMatriz(matrizB);
 
-    double tiempoEjecucion = medirTiempoMultiplicacion(matrizA, matrizB, resultado);
+    int iteraciones = 1000;  
+    double tiempoEjecucion = medirTiempoMultiplicacion(matrizA, matrizB, resultado, iteraciones);
 
-
-    printf("Resultado de la multiplicacion:\n");
+    printf("\033[1;33mResultado de la multiplicacion:\n");
     imprimirMatriz(resultado);
 
-    printf("Tiempo de ejecucion: %.2f milisegundos\n", tiempoEjecucion);
+    printf("\033[1;34mTiempo de ejecucion : %.2f milisegundos\n",  tiempoEjecucion);
 
     return 0;
 }
