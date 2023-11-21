@@ -2,66 +2,118 @@
 #include <stdlib.h>
 #include <time.h>
 
-int busqueda_secuencial(int arr[], int n, int x) 
+#define TAMANIO 50000
+#define NUM_EJECUCIONES 100
+#define REPETICIONES_BUSQUEDA 1000
+
+void generarArregloOrdenado(int arr[], int n) 
 {
-	int i;
-    for (i = 0; i < n; i++) {
-        if (arr[i] == x)
-            return i;
+    int i;
+    for (i = 0; i < n; i++) 
+    {
+        arr[i] = i;
     }
-    return -1;
 }
 
-int busqueda_binaria(int arr[], int n, int x) 
+int busquedaSecuencial(int arr[], int n, int clave) 
 {
-    int left = 0, right = n - 1;
-    while (left <= right) 
-	{
-        int mid = left + (right - left) / 2;
-        if (arr[mid] == x)
-            return mid;
-        if (arr[mid] < x)
-            left = mid + 1;
-        else
-            right = mid - 1;
-    }
-    return -1;
-}
-
-int main() 
-{
-    int n = 50000;
-    int arr[n];
     int i;
     for (i = 0; i < n; i++) 
 	{
-        arr[i] = i + 1;
+        if (arr[i] == clave) 
+		{
+            return i;
+        }
     }
+    return -1;
+}
 
-    double start_time, end_time;
-    int found_index;
-
-    printf("Busqueda Secuencial\n");
-    start_time = clock();
-    for (i = 0; i < 100; i++) 
+int busquedaBinaria(int arr[], int izquierda, int derecha, int clave) 
+{
+    while (izquierda <= derecha) 
 	{
-        int num = rand() % n + 1;
-        found_index = busqueda_secuencial(arr, n, num);
-        end_time = clock();
-        printf("Numero: %d Encontrado en posicion: %d Tiempo: %lf ms\n", num, found_index, (end_time - start_time) * 1000 / CLOCKS_PER_SEC);
-        start_time = end_time;
+        int medio = izquierda + (derecha - izquierda) / 2;
+        if (arr[medio] == clave) 
+		{
+            return medio;
+        }
+        
+        if (arr[medio] < clave) 
+		{
+            izquierda = medio + 1;
+        } 
+        
+		else 
+		{
+            derecha = medio - 1;
+        }
     }
+    return -1;
+}
 
-    printf("\nBusqueda Binaria\n");
-    start_time = clock();
-    for (i = 0; i < 100; i++) 
+void imprimirEstadisticas(double tiempos[], int n) 
+{
+    double total = 0.0, min = tiempos[0], max = tiempos[0];
+    int i;
+    
+    for (i = 0; i < n; i++) 
 	{
-        int num = rand() % n + 1;
-        found_index = busqueda_binaria(arr, n, num);
-        end_time = clock();
-        printf("Numero: %d Encontrado en posicion: %d Tiempo: %lf ms\n", num, found_index, (end_time - start_time) * 1000 / CLOCKS_PER_SEC);
-        start_time = end_time;
+        total += tiempos[i];
+        if (tiempos[i] < min) min = tiempos[i];
+        if (tiempos[i] > max) max = tiempos[i];
     }
+    printf("Tiempo Promedio: %f ms\n", total / n);
+    printf("Tiempo Minimo: %f ms\n", min);
+    printf("Tiempo Maximo: %f ms\n", max);
+}
+
+
+int main()
+{
+    int arr[TAMANIO];
+    int i, j;
+    
+    double tiemposSecuencial[NUM_EJECUCIONES], tiemposBinario[NUM_EJECUCIONES];
+    clock_t inicio, fin;
+
+    srand(time(NULL));
+    generarArregloOrdenado(arr, TAMANIO);
+
+    printf("Busqueda Secuencial:\n");
+    
+    for (i = 0; i < NUM_EJECUCIONES; i++) 
+	{
+        int clave = rand() % TAMANIO;
+        inicio = clock();
+        
+        for (j = 0; j < REPETICIONES_BUSQUEDA; j++) 
+		{
+            busquedaSecuencial(arr, TAMANIO, clave);
+        }
+        
+        fin = clock();
+        tiemposSecuencial[i] = ((double)(fin - inicio)) / CLOCKS_PER_SEC / REPETICIONES_BUSQUEDA * 1000;
+    }
+    
+    imprimirEstadisticas(tiemposSecuencial, NUM_EJECUCIONES);
+
+
+    printf("\nBusqueda Binaria:\n");
+    
+    for (i = 0; i < NUM_EJECUCIONES; i++) 
+	{
+        int clave = rand() % TAMANIO;
+        inicio = clock();
+        
+        for (j = 0; j < REPETICIONES_BUSQUEDA; j++) 
+		{
+            busquedaBinaria(arr, 0, TAMANIO - 1, clave);
+        }
+        fin = clock();
+        tiemposBinario[i] = ((double)(fin - inicio)) / CLOCKS_PER_SEC / REPETICIONES_BUSQUEDA * 1000;
+    }
+    imprimirEstadisticas(tiemposBinario, NUM_EJECUCIONES);
 
     return 0;
 }
+
